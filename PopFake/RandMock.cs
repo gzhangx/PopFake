@@ -372,8 +372,14 @@ namespace Veda.Tests
             sw.WriteLine(ending);
         }
         //
-        
-        public object Generate(Type t, Action<object> init = null)
+        public T Generate<T>(Action<object> init = null)
+        {
+            return (T)GenerateByType(typeof(T), o =>
+            {
+                if (init != null) init((T)o);
+            });
+        }
+        public object GenerateByType(Type t, Action<object> init = null)
         {
             using (sw = File.CreateText(@"c:\temp\test.txt"))
             {
