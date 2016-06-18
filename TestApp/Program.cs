@@ -12,7 +12,7 @@ namespace TestApp
         public string name;
 
     }
-    class Program
+    class Program : Veda.Tests.RandMock.SWriter
     {
         public string Name { get; set;}
         public int id;
@@ -24,8 +24,18 @@ namespace TestApp
         static void Main(string[] args)
         {
 
-            var mock = new Veda.Tests.RandMock().Generate<Program>();
+            var mock = new Veda.Tests.RandMock().Generate<Program>(null, new Program());
             Console.WriteLine(mock.testGuid);
+        }
+
+        public void Write(object s)
+        {
+            Console.Write(s);
+        }
+
+        public void WriteLine(string s)
+        {
+            Console.WriteLine(s);
         }
     }
 }

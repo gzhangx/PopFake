@@ -310,17 +310,25 @@ namespace Veda.Tests
             }
         }
 
-        StreamWriter sw;
+        public interface SWriter
+        {
+            void Write(object s);
+            void WriteLine(string s);
+        }
+        SWriter sw;
         private void EmiteProperty(int level, string name)
         {
+            if (sw == null) return;
             sw.Write(string.Format("{0}{1} = ", " ".PadLeft(level), name));
         }
         private void EmitMark(string mark)
         {
+            if (sw == null) return;
             sw.Write(mark);
         }
         private void EmiteValue(Type type, object val, string ending = ",")
         {
+            if (sw == null) return;
             var PropertyType = Nullable.GetUnderlyingType(type) ?? type;
             
             if (PropertyType.IsEnum)
@@ -372,16 +380,16 @@ namespace Veda.Tests
             sw.WriteLine(ending);
         }
         //
-        public T Generate<T>(Action<object> init = null)
+        public T Generate<T>(Action<object> init = null, SWriter sw = null)
         {
             return (T)GenerateByType(typeof(T), o =>
             {
                 if (init != null) init((T)o);
-            });
+            }, sw);
         }
-        public object GenerateByType(Type t, Action<object> init = null)
+        public object GenerateByType(Type t, Action<object> init = null, SWriter sw = null)
         {
-            using (sw = File.CreateText(@"c:\temp\test.txt"))
+            this.sw = sw;
             {
                 var instance = Activator.CreateInstance(t);
                 if (init != null) init(instance);
